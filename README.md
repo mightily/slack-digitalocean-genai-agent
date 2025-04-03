@@ -11,7 +11,7 @@ This Slack chatbot app template provides a customizable solution for integrating
 * **Utilize a custom function** for integration with Workflow Builder to summarize messages
 * **Select your preferred AI model** from the app home to customize responses
 * **Seamless integration** with DigitalOcean GenAI Platform
-* **Choice of state storage**:
+* **Choice of state storage (optional)**:
   * **File-based state store** creates a file in /data per user to store preferences
   * **Redis state store** for distributed deployments (recommended for App Platform)
 
@@ -34,21 +34,21 @@ Before running the app, store these environment variables:
 1. From your app's configuration page, go to **OAuth & Permissions** and copy the Bot User OAuth Token (`SLACK_BOT_TOKEN`)
 2. From **Basic Information**, create an app-level token with the `connections:write` scope (`SLACK_APP_TOKEN`)
 3. Get your DigitalOcean GenAI API key from the DigitalOcean dashboard (`GENAI_API_KEY`)
-4. Set your GenAI API URL if using a private agent (`GENAI_API_URL`)
+4. Set your GenAI API URL, append `/api/v1` (`GENAI_API_URL`)
 
 ```zsh
 # Set environment variables
 export SLACK_BOT_TOKEN=<your-bot-token>
 export SLACK_APP_TOKEN=<your-app-token>
 export GENAI_API_KEY=<your-genai-api-key>
-export GENAI_API_URL=<your-genai-api-url>  # Optional for private agents, ex: https://agent-<id>.ondigitalocean.app/api/v1
+export GENAI_API_URL=<your-genai-api-url>  # https://agent-<id>.ondigitalocean.app/api/v1
 ```
 
 ### Local Development
 
 ```zsh
 # Clone this project
-git clone https://github.com/slack-samples/bolt-python-ai-chatbot.git
+git clone https://github.com/DO-Solutions/slack-digitalocean-genai-agent
 
 # Navigate to the project directory
 cd bolt-python-ai-chatbot
@@ -71,7 +71,7 @@ This application can be easily deployed to DigitalOcean App Platform:
 1. Fork or clone this repository to your GitHub account
 2. In the DigitalOcean control panel, go to App Platform and create a new app
 3. Connect your GitHub repository
-4. Configure the environment variables (SLACK_BOT_TOKEN, SLACK_APP_TOKEN, GENAI_API_KEY, GENAI_API_URL)
+4. Configure the environment variables (`SLACK_BOT_TOKEN`, `SLACK_APP_TOKEN`, `GENAI_API_KEY`, `GENAI_API_URL`)
 5. Optionally add a Redis database component for state storage
 6. Deploy the application
 
