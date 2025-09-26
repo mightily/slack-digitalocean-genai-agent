@@ -43,7 +43,7 @@ workers:
     deploy_on_push: true
     repo: mightily/slack-digitaocean-genai-agent
   instance_count: 2
-  instance_size_slug: apps-d-1vcpu-2gb
+  instance_size_slug: apps-d-1vcpu-512mb
   name: slack-bot
   run_command: python app.py
   source_dir: /
