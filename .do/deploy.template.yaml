@@ -40,7 +40,7 @@ spec:
       scope: RUN_TIME
       value: ${slack-bot-cache.REDIS_URL}
     github:
-      branch: do
+      branch: main
       deploy_on_push: true
       repo: mightily/slack-digitaocean-genai-agent
     instance_count: 2
