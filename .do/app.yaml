@@ -41,7 +41,7 @@ workers:
   github:
     branch: redis
     deploy_on_push: true
-    repo: do-solutions/slack-digitaocean-genai-agent
+    repo: mightily/slack-digitaocean-genai-agent
   instance_count: 2
   instance_size_slug: apps-d-1vcpu-2gb
   name: slack-bot
