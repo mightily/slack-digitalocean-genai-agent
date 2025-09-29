@@ -1,6 +1,6 @@
 {
     "display_information": {
-        "name": "Sailor",
+        "name": "Debbie",
         "description": "Helping you navigate through challenges like a true ocean explorer",
         "background_color": "#0c1633"
     },
@@ -11,17 +11,17 @@
             "messages_tab_read_only_enabled": false
         },
         "bot_user": {
-            "display_name": "Sailor",
+            "display_name": "Debbie",
             "always_online": true
         },
         "slash_commands": [
             {
-                "command": "/ask-sailor",
-                "description": "Interact with Sailor.",
+                "command": "/ask-debbie",
+                "description": "Interact with Debbie.",
                 "should_escape": false
             },
             {
-                "command": "/sailor-summary",
+                "command": "/debbie-summary",
                 "description": "Summarize a Slack thread by providing a thread link.",
                 "should_escape": false
             }
@@ -71,8 +71,8 @@
     },
     "functions": {
         "summary_function": {
-            "title": "Sailor Custom Function",
-            "description": "Interact with an AI Chatbot. Sailor must be a channel member.",
+            "title": "Debbie Custom Function",
+            "description": "Interact with an AI Chatbot. Debbie must be a channel member.",
             "input_parameters": {
                 "user_context": {
                     "type": "slack#/types/user_context",

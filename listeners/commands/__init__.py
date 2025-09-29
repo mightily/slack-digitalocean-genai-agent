@@ -4,5 +4,5 @@ from .summary_command import summary_callback
 
 
 def register(app: App):
-    app.command("/ask-sailor")(ask_callback)
-    app.command("/sailor-summary")(summary_callback)
+    app.command("/ask-debbie")(ask_callback)
+    app.command("/debbie-summary")(summary_callback)
