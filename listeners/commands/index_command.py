@@ -15,6 +15,15 @@ def do_index_callback(client: WebClient, ack: Ack, command, say: Say, logger: Lo
         channel_id = context["channel_id"]
         # Optionally, you can accept arguments from the command text
         data_source_id = command.get("text", "").strip() or os.environ.get("DO_DATA_SOURCE_ID")
+        knowledge_base_id = os.environ.get("DO_KB_ID")
+        if not knowledge_base_id:
+            client.chat_postEphemeral(
+                channel=channel_id,
+                user=user_id,
+                text="Knowledge base ID is not set. Please set DO_KB_ID in the environment."
+            )
+            return
+
         if not data_source_id:
             client.chat_postEphemeral(
                 channel=channel_id,
@@ -33,24 +42,28 @@ def do_index_callback(client: WebClient, ack: Ack, command, say: Say, logger: Lo
             )
             return
 
-        # Example DigitalOcean API call (replace with the actual endpoint and payload)
-        url = f"https://api.digitalocean.com/v2/ai/index/{data_source_id}/start"
+        # New DigitalOcean API call for indexing job
+        url = "https://api.digitalocean.com/v2/gen-ai/indexing_jobs"
         headers = {
             "Authorization": f"Bearer {do_api_token}",
             "Content-Type": "application/json"
         }
-        response = requests.post(url, headers=headers)
+        payload = {
+            "knowledge_base_uuid": knowledge_base_id,
+            "data_source_uuids": [data_source_id]
+        }
+        response = requests.post(url, headers=headers, json=payload)
         if response.status_code == 200:
             client.chat_postEphemeral(
                 channel=channel_id,
                 user=user_id,
-                text=f"Indexing started for data source `{data_source_id}`."
+                text=f"Indexing job started for data source `{data_source_id}` in knowledge base `{knowledge_base_id}`."
             )
         else:
             client.chat_postEphemeral(
                 channel=channel_id,
                 user=user_id,
-                text=f"Failed to start indexing. Status: {response.status_code}, Response: {response.text}"
+                text=f"Failed to start indexing job. Status: {response.status_code}, Response: {response.text}"
             )
     except Exception as e:
         logger.error(f"Error in /update-debbie: {e}")
