@@ -13,13 +13,20 @@ def debbie_progress_callback(client: WebClient, ack: Ack, command, say: Say, log
         ack()
         user_id = context["user_id"]
         channel_id = context["channel_id"]
-        # Optionally, you can accept arguments from the command text
-        data_source_id = command.get("text", "").strip() or os.environ.get("DO_DATA_SOURCE_ID")
-        if not data_source_id:
+
+        # Try to get index job ID from file (per channel)
+        index_job_id = None
+        try:
+            with open(f"last_index_job_{channel_id}.txt", "r") as f:
+                index_job_id = f.read().strip()
+        except Exception:
+            pass
+
+        if not index_job_id:
             client.chat_postEphemeral(
                 channel=channel_id,
                 user=user_id,
-                text="Please provide a data source ID as an argument or set DO_DATA_SOURCE_ID in the environment."
+                text="No recent index job found for this channel. Please run /update-debbie first."
             )
             return
 
@@ -33,8 +40,8 @@ def debbie_progress_callback(client: WebClient, ack: Ack, command, say: Say, log
             )
             return
 
-        # Example DigitalOcean API call (replace with the actual endpoint and payload)
-        url = f"https://api.digitalocean.com/v2/ai/index/{data_source_id}/progress"
+        # New DigitalOcean API call for progress by index job ID
+        url = f"https://api.digitalocean.com/v2/gen-ai/indexing_jobs/{index_job_id}"
         headers = {
             "Authorization": f"Bearer {do_api_token}",
             "Content-Type": "application/json"
@@ -45,7 +52,7 @@ def debbie_progress_callback(client: WebClient, ack: Ack, command, say: Say, log
             client.chat_postEphemeral(
                 channel=channel_id,
                 user=user_id,
-                text=f"Index progress for `{data_source_id}`: {progress}"
+                text=f"Index job progress for job `{index_job_id}`: {progress}"
             )
         else:
             client.chat_postEphemeral(

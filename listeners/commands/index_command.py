@@ -54,11 +54,24 @@ def do_index_callback(client: WebClient, ack: Ack, command, say: Say, logger: Lo
         }
         response = requests.post(url, headers=headers, json=payload)
         if response.status_code == 200:
-            client.chat_postEphemeral(
-                channel=channel_id,
-                user=user_id,
-                text=f"Indexing job started for data source `{data_source_id}` in knowledge base `{knowledge_base_id}`."
-            )
+            try:
+                index_job_id = response.json().get("id")
+                if index_job_id:
+                    # Store the index job ID in a file (one per channel for simplicity)
+                    with open(f"last_index_job_{channel_id}.txt", "w") as f:
+                        f.write(index_job_id)
+                client.chat_postEphemeral(
+                    channel=channel_id,
+                    user=user_id,
+                    text=f"Indexing job started for data source `{data_source_id}` in knowledge base `{knowledge_base_id}`. Index Job ID: `{index_job_id}`."
+                )
+            except Exception as file_err:
+                logger.error(f"Failed to store index job ID: {file_err}")
+                client.chat_postEphemeral(
+                    channel=channel_id,
+                    user=user_id,
+                    text=f"Indexing job started, but failed to store job ID for progress tracking."
+                )
         else:
             client.chat_postEphemeral(
                 channel=channel_id,
