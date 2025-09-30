@@ -55,8 +55,12 @@ def do_index_callback(client: WebClient, ack: Ack, command, say: Say, logger: Lo
         response = requests.post(url, headers=headers, json=payload)
         if response.status_code == 200:
             try:
-                jobs = response.json().get("jobs", [])
-                index_job_id = jobs[0]["uuid"] if jobs else None
+                resp_json = response.json()
+                index_job_id = None
+                if "jobs" in resp_json and isinstance(resp_json["jobs"], list) and resp_json["jobs"]:
+                    index_job_id = resp_json["jobs"][0]["uuid"]
+                elif "job" in resp_json and isinstance(resp_json["job"], dict):
+                    index_job_id = resp_json["job"].get("uuid")
                 if index_job_id:
                     # Ensure the index_jobs directory exists
                     dir_path = os.path.join(os.path.dirname(__file__), '../../index_jobs')
@@ -67,7 +71,7 @@ def do_index_callback(client: WebClient, ack: Ack, command, say: Say, logger: Lo
                         f.write(index_job_id)
                     logger.info(f"Stored index job ID {index_job_id} at {file_path}")
                 else:
-                    logger.error(f"No index job ID found in response: {response.json()}")
+                    logger.error(f"No index job ID found in response: {resp_json}")
                 client.chat_postEphemeral(
                     channel=channel_id,
                     user=user_id,
