@@ -55,7 +55,8 @@ def do_index_callback(client: WebClient, ack: Ack, command, say: Say, logger: Lo
         response = requests.post(url, headers=headers, json=payload)
         if response.status_code == 200:
             try:
-                index_job_id = response.json().get("id")
+                jobs = response.json().get("jobs", [])
+                index_job_id = jobs[0]["uuid"] if jobs else None
                 if index_job_id:
                     # Store the index job ID in a file (one per channel for simplicity)
                     with open(f"last_index_job_{channel_id}.txt", "w") as f:
