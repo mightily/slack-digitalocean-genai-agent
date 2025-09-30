@@ -58,9 +58,16 @@ def do_index_callback(client: WebClient, ack: Ack, command, say: Say, logger: Lo
                 jobs = response.json().get("jobs", [])
                 index_job_id = jobs[0]["uuid"] if jobs else None
                 if index_job_id:
-                    # Store the index job ID in a file (one per channel for simplicity)
-                    with open(f"last_index_job_{channel_id}.txt", "w") as f:
+                    # Ensure the index_jobs directory exists
+                    dir_path = os.path.join(os.path.dirname(__file__), '../../index_jobs')
+                    dir_path = os.path.abspath(dir_path)
+                    os.makedirs(dir_path, exist_ok=True)
+                    file_path = os.path.join(dir_path, f"last_index_job_{channel_id}.txt")
+                    with open(file_path, "w") as f:
                         f.write(index_job_id)
+                    logger.info(f"Stored index job ID {index_job_id} at {file_path}")
+                else:
+                    logger.error(f"No index job ID found in response: {response.json()}")
                 client.chat_postEphemeral(
                     channel=channel_id,
                     user=user_id,
@@ -71,7 +78,7 @@ def do_index_callback(client: WebClient, ack: Ack, command, say: Say, logger: Lo
                 client.chat_postEphemeral(
                     channel=channel_id,
                     user=user_id,
-                    text=f"Indexing job started, but failed to store job ID for progress tracking."
+                    text=f"Indexing job started, but failed to store job ID for progress tracking. Error: {file_err}"
                 )
         else:
             client.chat_postEphemeral(

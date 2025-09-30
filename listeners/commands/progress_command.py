@@ -14,13 +14,17 @@ def debbie_progress_callback(client: WebClient, ack: Ack, command, say: Say, log
         user_id = context["user_id"]
         channel_id = context["channel_id"]
 
-        # Try to get index job ID from file (per channel)
+        # Try to get index job ID from file (per channel, in index_jobs directory)
         index_job_id = None
         try:
-            with open(f"last_index_job_{channel_id}.txt", "r") as f:
+            dir_path = os.path.join(os.path.dirname(__file__), '../../index_jobs')
+            dir_path = os.path.abspath(dir_path)
+            file_path = os.path.join(dir_path, f"last_index_job_{channel_id}.txt")
+            with open(file_path, "r") as f:
                 index_job_id = f.read().strip()
-        except Exception:
-            pass
+            logger.info(f"Read index job ID {index_job_id} from {file_path}")
+        except Exception as file_err:
+            logger.error(f"Failed to read index job ID file: {file_err}")
 
         if not index_job_id:
             client.chat_postEphemeral(
